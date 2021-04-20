@@ -31,10 +31,12 @@ interface Converter {
         @JvmField
         val DEFAULT: Converter = object : Converter {
 
-            override fun <S> convert(succeed: Type,
-                                     request: Request,
-                                     response: Response,
-                                     cache: Boolean): S? {
+            override fun <S> convert(
+                succeed: Type,
+                request: Request,
+                response: Response,
+                cache: Boolean
+            ): S? {
                 if (succeed === String::class.java) {
                     val string = response.body().string()
                     response.log = string

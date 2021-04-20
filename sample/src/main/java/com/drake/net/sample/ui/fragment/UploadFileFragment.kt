@@ -19,11 +19,8 @@ package com.drake.net.sample.ui.fragment
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
-import com.drake.net.Post
 import com.drake.net.sample.R
 import com.drake.net.utils.scopeNetLife
-import com.yanzhenjie.kalle.FormBody
-import kotlinx.android.synthetic.main.fragment_upload_file.*
 import java.io.File
 import java.io.FileOutputStream
 
@@ -32,26 +29,24 @@ class UploadFileFragment : Fragment(R.layout.fragment_upload_file) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         scopeNetLife {
-            Post<String>("upload") {
-                val saveFile = getFile()
-                val form = FormBody.newBuilder().file("file", saveFile).build()
-
-                form.onProgress { origin, progress ->
-
-                    seek.progress = progress // 进度条
-                    // 格式化显示单位
-                    val downloadSize =
-                            android.text.format.Formatter.formatFileSize(requireContext(), 23)
-                    val downloadSpeed =
-                            android.text.format.Formatter.formatFileSize(requireContext(), 23)
-
-                    // 显示下载信息
-                    tv_progress.text = "上传进度: $progress% 已下载: $downloadSize 下载速度: $downloadSpeed"
-                }
-
-                body(form)
-
-            }.await()
+            // Post<String>("upload") {
+            //     val saveFile = getFile()
+            //     val form = FormBody.newBuilder().file("file", saveFile).build()
+            //
+            //     form.onProgress { origin, progress ->
+            //
+            //         seek.progress = progress // 进度条
+            //         // 格式化显示单位
+            //         val downloadSize =
+            //                 android.text.format.Formatter.formatFileSize(requireContext(), 23)
+            //         val downloadSpeed =
+            //                 android.text.format.Formatter.formatFileSize(requireContext(), 23)
+            //
+            //         // 显示下载信息
+            //         tv_progress.text = "上传进度: $progress% 已下载: $downloadSize 下载速度: $downloadSpeed"
+            //     }
+            //     body(form)
+            // }.await()
         }
     }
 

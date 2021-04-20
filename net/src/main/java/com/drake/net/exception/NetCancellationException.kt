@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.drake.net.error
+package com.drake.net.exception
 
 import com.yanzhenjie.kalle.NetCancel
 import kotlinx.coroutines.CoroutineExceptionHandler

@@ -113,7 +113,7 @@ open class NetCoroutineScope(
     }
 
     override fun cancel(cause: CancellationException?) {
-        NetCancel.cancel(uid)
+        NetConfig.cancel(uid)
         super.cancel(cause)
     }
 }

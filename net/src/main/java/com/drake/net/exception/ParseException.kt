@@ -13,16 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.drake.net.exception
 
-package com.drake.net.error
+import okhttp3.Request
 
-import com.yanzhenjie.kalle.Request
-import com.yanzhenjie.kalle.exception.NetException
 
-/**
- * 500
- */
-class ServerResponseException(
-    val code: Int,
-    request: Request
-) : NetException(request, code.toString())
+class ParseException(
+    request: Request,
+    message: String = "An exception occurred while parsing the data",
+    cause: Throwable? = null
+) : NetException(request, message, cause)

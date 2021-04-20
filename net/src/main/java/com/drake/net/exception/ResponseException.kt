@@ -14,7 +14,22 @@
  * limitations under the License.
  */
 
-package com.drake.net.tag
+@file:Suppress("MemberVisibilityCanBePrivate")
 
-/*请求参数打印标签*/
-object REQUEST : TAG()
+package com.drake.net.exception
+
+import com.yanzhenjie.kalle.Request
+import com.yanzhenjie.kalle.exception.NetException
+
+/**
+ *  对应网络请求后台定义的错误信息
+ * @param msg 网络请求错误信息
+ * @param code 网络请求错误码
+ * @param tag 应对错误码判断为错时但是后端又返回了需要使用的数据(建议后端修改). 一般在Convert中设置数据
+ */
+class ResponseException(
+    val code: Int,
+    val msg: String,
+    request: Request,
+    val tag: Any? = null
+) : NetException(request, "$code $msg")

@@ -17,15 +17,11 @@
 package com.drake.net.sample.base
 
 import android.app.Application
-import com.drake.net.cacheEnabled
 import com.drake.net.initNet
-import com.drake.net.logEnabled
 import com.drake.net.sample.BR
 import com.drake.net.sample.BuildConfig
 import com.drake.net.sample.R
-import com.drake.net.sample.convert.MoshiConvert
-import com.drake.net.sample.interceptor.DynamicParameterInterceptor
-import com.drake.net.sample.interceptor.NetTagInterceptor
+import com.drake.net.utils.logEnabled
 import com.drake.statelayout.StateConfig
 import com.scwang.smart.refresh.footer.ClassicsFooter
 import com.scwang.smart.refresh.header.MaterialHeader
@@ -44,11 +40,6 @@ class App : Application() {
         }
 
         initNet("http://43.128.31.195/") {
-            converter(MoshiConvert()) // 自动解析JSON映射到实体类中, 转换器分为全局和单例, 覆盖生效(拦截器允许多个)
-            cacheEnabled()
-            addInterceptor(NetTagInterceptor())
-            addInterceptor(DynamicParameterInterceptor())
-            setLogRecord(BuildConfig.DEBUG) // 日志记录器
             logEnabled = BuildConfig.DEBUG // LogCat异常日志
         }
 
@@ -56,6 +47,7 @@ class App : Application() {
         SmartRefreshLayout.setDefaultRefreshHeaderCreator { context, _ ->
             MaterialHeader(context)
         }
+
         SmartRefreshLayout.setDefaultRefreshFooterCreator { context, _ ->
             ClassicsFooter(context)
         }
@@ -64,3 +56,4 @@ class App : Application() {
 
     }
 }
+

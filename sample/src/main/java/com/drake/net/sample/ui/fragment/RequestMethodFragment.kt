@@ -25,7 +25,10 @@ import android.view.MenuItem
 import android.view.View
 import androidx.fragment.app.Fragment
 import com.drake.net.*
+import com.drake.net.convert.NetConverter
 import com.drake.net.sample.R
+import com.drake.net.tag.REQUEST
+import com.drake.net.tag.RESPONSE
 import com.drake.net.utils.scopeNetLife
 import kotlinx.android.synthetic.main.fragment_async_task.*
 
@@ -34,6 +37,32 @@ class RequestMethodFragment : Fragment(R.layout.fragment_request_method) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setHasOptionsMenu(true)
+
+        // val okHttpClient = OkHttpClient.Builder().build()
+        // val body = FormBody.Builder().add("", "").build()
+        // val request = Request.Builder().post(body).uid(123).build()
+        // val newCall = okHttpClient.newCall(request)
+        // newCall.execute()
+        // newCall.cancel()
+        // newCall.enqueue(object : Callback {
+        //     override fun onFailure(call: Call, e: IOException) {
+        //     }
+        //
+        //     override fun onResponse(call: Call, response: Response) {
+        //     }
+        // })
+
+        // scopeNetLife {
+        //     tv_fragment.text = Get<String>("api").await()
+        // }
+
+        scopeNetLife {
+            tv_fragment.text = Get<String>("api", REQUEST + RESPONSE) {
+                uid("用户信息")
+            }.await()
+        }
+
+        NetConfig.cancel("用户信息")
     }
 
     private fun GET() {
@@ -107,6 +136,7 @@ class RequestMethodFragment : Fragment(R.layout.fragment_request_method) {
             // 创建JSON
             tv_fragment.text = Post<String>("api") {
                 json("name" to name, "age" to age, "measurements" to measurements) // 同时支持Map集合
+                converter = NetConverter.DEFAULT
             }.await()
         }
     }
@@ -121,11 +151,11 @@ class RequestMethodFragment : Fragment(R.layout.fragment_request_method) {
             R.id.get -> GET()
             R.id.post -> POST()
             R.id.head -> HEAD()
-            R.id.put -> PUT()
-            R.id.patch -> PATCH()
-            R.id.delete -> DELETE()
             R.id.trace -> TRACE()
             R.id.options -> OPTIONS()
+            R.id.delete -> DELETE()
+            R.id.put -> PUT()
+            R.id.patch -> PATCH()
             R.id.json -> JSON()
         }
         return super.onOptionsItemSelected(item)

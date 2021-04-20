@@ -14,23 +14,9 @@
  * limitations under the License.
  */
 
-package com.drake.net.sample.ui.fragment
+package com.drake.net.request
 
-import android.os.Bundle
-import android.view.View
-import androidx.fragment.app.Fragment
-import com.drake.net.sample.R
-import com.drake.net.utils.scopeNetLife
-
-
-class CustomConvertFragment : Fragment(R.layout.fragment_custom_convert) {
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        scopeNetLife {
-            // tv_fragment.text = Get<Model>("api") {
-            //     converter(GsonConvert()) // 单例转换器, 此时会忽略全局转换器
-            // }.await().data.request_method
-        }
-    }
-
+enum class Method {
+    GET, HEAD, OPTIONS, TRACE, // Url request
+    POST, DELETE, PUT, PATCH // Body request
 }

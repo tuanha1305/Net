@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("MemberVisibilityCanBePrivate")
+
 package com.drake.net.tag
 
 import kotlin.reflect.KClass
@@ -21,9 +23,9 @@ import kotlin.reflect.KClass
 
 abstract class TAG {
 
-    protected var list: MutableList<TAG>? = null
+    var list: MutableList<TAG>? = null
 
-    operator fun get(key: KClass<out TAG>): TAG? {
+    open operator fun get(key: KClass<out TAG>): TAG? {
 
         list?.forEach {
             if (it::class == key) return it
@@ -32,7 +34,7 @@ abstract class TAG {
         return if (this::class == key) this else null
     }
 
-    operator fun plus(tag: TAG): TAG {
+    open operator fun plus(tag: TAG): TAG {
 
         if (this == tag) return this
         if (list == null) list = mutableListOf(this)
@@ -50,7 +52,7 @@ abstract class TAG {
         return this
     }
 
-    operator fun minus(tag: TAG): TAG {
+    open operator fun minus(tag: TAG): TAG {
 
         if (this == tag) return this
 
@@ -65,7 +67,7 @@ abstract class TAG {
         return this
     }
 
-    operator fun contains(tag: @UnsafeVariance TAG): Boolean {
+    open operator fun contains(tag: @UnsafeVariance TAG): Boolean {
 
         if (tag == this) return true
 
@@ -77,5 +79,4 @@ abstract class TAG {
             list?.containsAll(right) ?: false
         }
     }
-
 }

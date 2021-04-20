@@ -20,7 +20,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
-import com.drake.net.DownloadImage
+import com.drake.net.GetImage
 import com.drake.net.NetConfig
 import com.drake.net.sample.R
 import com.drake.net.utils.scopeDialog
@@ -31,7 +31,7 @@ class DownloadImageFragment : Fragment(R.layout.fragment_download_image) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         scopeDialog {
-            val file = DownloadImage(NetConfig.host + "download/img", 100, 100).await()
+            val file = GetImage(NetConfig.host + "download/img", 100, 100).await()
             val uri = Uri.fromFile(file)
             iv_img.setImageURI(uri)
         }

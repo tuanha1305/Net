@@ -14,15 +14,23 @@
  * limitations under the License.
  */
 
-package com.drake.net.error
+package com.drake.net.request
 
-import com.yanzhenjie.kalle.Request
-import com.yanzhenjie.kalle.exception.NetException
+class UrlRequest : BasicRequest() {
 
-/**
- * 404
- */
-class RequestParamsException(
-    val code: Int,
-    request: Request
-) : NetException(request, code.toString())
+    override fun param(name: String, value: String?) {
+        httpUrl.setQueryParameter(name, value)
+    }
+
+    override fun paramEncoded(name: String, value: String?) {
+        httpUrl.setEncodedQueryParameter(name, value)
+    }
+
+    override fun param(name: String, value: Number?) {
+        httpUrl.setQueryParameter(name, value.toString())
+    }
+
+    override fun param(name: String, value: Boolean?) {
+        httpUrl.setQueryParameter(name, value.toString())
+    }
+}

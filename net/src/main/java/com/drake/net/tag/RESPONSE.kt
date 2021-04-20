@@ -16,7 +16,5 @@
 
 package com.drake.net.tag
 
-/**
- * 响应体打印标签
- */
+/*响应体打印标签*/
 object RESPONSE : TAG()

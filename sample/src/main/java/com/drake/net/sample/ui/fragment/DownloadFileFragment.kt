@@ -17,17 +17,18 @@
 package com.drake.net.sample.ui.fragment
 
 import android.os.Bundle
-import android.text.format.Formatter
+import android.os.Environment
+import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import androidx.fragment.app.Fragment
-import com.drake.net.Download
+import com.drake.net.Get
 import com.drake.net.sample.R
 import com.drake.net.scope.NetCoroutineScope
 import com.drake.net.utils.scopeNetLife
-import kotlinx.android.synthetic.main.fragment_download_file.*
+import java.io.File
 
 
 class DownloadFileFragment : Fragment(R.layout.fragment_download_file) {
@@ -38,20 +39,26 @@ class DownloadFileFragment : Fragment(R.layout.fragment_download_file) {
         setHasOptionsMenu(true)
 
         downloadScope = scopeNetLife {
-            val filePath = Download("download", requireContext().filesDir.path) {
+            val file = Get<File>("download") {
+                val path = Environment.getDownloadCacheDirectory()
+                Log.d("日志", "(DownloadFileFragment.kt:44)    path = ${path}")
+
+                downloadDir(path.absolutePath)
+                downloadFileName("install.apk")
                 // 下载进度回调
-                onProgress { progress, byteCount, speed ->
-                    // 进度条
-                    seek.progress = progress
-
-                    // 格式化显示单位
-                    val downloadSize = Formatter.formatFileSize(requireContext(), byteCount)
-                    val downloadSpeed = Formatter.formatFileSize(requireContext(), speed)
-
-                    // 显示下载信息
-                    tv_progress.text = "下载进度: $progress% 已下载: $downloadSize 下载速度: $downloadSpeed"
-                }
+                // onProgress { progress, byteCount, speed ->
+                //     // 进度条
+                //     seek.progress = progress
+                //
+                //     // 格式化显示单位
+                //     val downloadSize = Formatter.formatFileSize(requireContext(), byteCount)
+                //     val downloadSpeed = Formatter.formatFileSize(requireContext(), speed)
+                //
+                //     // 显示下载信息
+                //     tv_progress.text = "下载进度: $progress% 已下载: $downloadSize 下载速度: $downloadSpeed"
+                // }
             }.await()
+            Log.d("日志", "(DownloadFileFragment.kt:58)    exists = ${file.exists()}")
         }
     }
 

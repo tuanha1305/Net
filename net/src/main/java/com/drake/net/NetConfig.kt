@@ -26,17 +26,16 @@ import com.drake.net.NetConfig.host
 import com.drake.net.NetConfig.onDialog
 import com.drake.net.NetConfig.onError
 import com.drake.net.NetConfig.onStateError
-import com.drake.net.error.RequestParamsException
-import com.drake.net.error.ResponseException
-import com.drake.net.error.ServerResponseException
+import com.drake.net.convert.NetConverter
+import com.drake.net.exception.RequestParamsException
+import com.drake.net.exception.ResponseException
+import com.drake.net.exception.ServerResponseException
+import com.drake.net.request.BasicRequest
 import com.drake.net.scope.DialogCoroutineScope
+import com.drake.net.utils.lazyField
 import com.drake.tooltip.toast
-import com.yanzhenjie.kalle.Kalle
-import com.yanzhenjie.kalle.KalleConfig
-import com.yanzhenjie.kalle.connect.RealTimeNetwork
-import com.yanzhenjie.kalle.connect.http.RedirectInterceptor
 import com.yanzhenjie.kalle.exception.*
-import com.yanzhenjie.kalle.simple.cache.DiskCacheStore
+import okhttp3.OkHttpClient
 import java.util.concurrent.ExecutionException
 
 
@@ -52,8 +51,12 @@ import java.util.concurrent.ExecutionException
 object NetConfig {
 
     lateinit var app: Application
+    var okHttpClient: OkHttpClient by lazyField { OkHttpClient.Builder().build() }
+
+    var converter: NetConverter = NetConverter.DEFAULT
     var host: String = ""
     var logEnabled = true
+    var onRequest: BasicRequest.() -> Unit = { }
 
     var onDialog: DialogCoroutineScope.(FragmentActivity) -> Dialog = {
         val progress = ProgressDialog(activity)
@@ -98,75 +101,27 @@ object NetConfig {
             else -> if (logEnabled) printStackTrace()
         }
     }
-}
-
-/**
- * 初始化框架
- * @param host 请求url的主机名
- * @param config 进行配置网络请求
- *
- * 如果想要自动解析数据模型请配置转换器, 可以继承或者参考默认转换器
- *
- * @see com.drake.net.convert.DefaultConvert
- */
-fun Application.initNet(host: String, config: KalleConfig.Builder.() -> Unit = {}) {
-    NetConfig.host = host
-    app = this
-    val builder = KalleConfig.newBuilder()
-    builder.apply {
-        network(RealTimeNetwork(this@initNet))
-        addInterceptor(RedirectInterceptor())
-        config()
-    }
-    Kalle.setConfig(builder.build())
-}
 
 
-/**
- * 设置全局错误处理
- *
- * @see NetConfig.onError
- */
-fun KalleConfig.Builder.onError(block: Throwable.() -> Unit) {
-    NetConfig.onError = block
-}
-
-/**
- * 设置缺省页的全局错误处理
- *
- * 如果不设置默认只有 解析数据错误 | 后台自定义错误 会显示吐司
- * @see NetConfig.onStateError
- */
-fun KalleConfig.Builder.onStateError(block: Throwable.(view: View) -> Unit) {
-    NetConfig.onStateError = block
-}
-
-/**
- * 设置使用DialogObserver默认弹出的加载对话框
- * 默认使用系统自带的ProgressDialog
- */
-fun KalleConfig.Builder.onDialog(block: (DialogCoroutineScope.(context: FragmentActivity) -> Dialog)) {
-    NetConfig.onDialog = block
-}
-
-var KalleConfig.Builder.logEnabled: Boolean
-    get() = NetConfig.logEnabled
-    set(value) {
-        NetConfig.logEnabled = value
+    /**
+     * 取消全部网络请求
+     */
+    fun cancelAll() {
+        NetConfig.okHttpClient.dispatcher.cancelAll()
     }
 
-/**
- * 开启缓存
- * @param path 缓存数据库路径
- * @param password 缓存数据库密码
- */
-fun KalleConfig.Builder.cacheEnabled(
-    path: String = app.cacheDir.absolutePath,
-    password: String = "cache"
-) {
-    val cacheStore = DiskCacheStore.newBuilder(path)
-        .password(password)
-        .build()
-    cacheStore(cacheStore)
+    /**
+     * 取消指定的网络请求
+     */
+    fun cancel(uid: Any?) {
+        if (uid == null) return
+        val dispatcher = NetConfig.okHttpClient.dispatcher
+        dispatcher.runningCalls().forEach {
+            if (it.request().tag() == uid) it.cancel()
+        }
+        dispatcher.queuedCalls().forEach {
+            if (it.request().tag() == uid) it.cancel()
+        }
+    }
 }
 
